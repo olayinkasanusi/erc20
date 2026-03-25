@@ -1,12 +1,32 @@
-// SPDX-License-Identifier: SEE LICENSE IN LICENSE
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
 contract ManualToken {
-    function name() public pure returns (string memory) {
-        return "Manual Token";
-    }
+    mapping(address => uint256) private s_balances;
+
+    // function name() public pure returns (string memory) {
+    //     return "Manual Token";
+    // }
+
+    string public name = "Manual Token";
 
     function totalSupply() public pure returns (uint256) {
-        return 1000000;
+        return 100 ether;
+    }
+
+    function decimal() public pure returns (uint8) {
+        return 18;
+    }
+
+    function balanceOf(address account) public view returns (uint256) {
+        return s_balances[account];
+    }
+
+    function transfer(address _to, uint256 _amount) public returns (bool) {
+        uint256 previousBalance = balanceOf(msg.sender) + balanceOf(_to);
+        s_balances[msg.sender] -= _amount;
+        s_balances[_to] += _amount;
+        require(balanceOf(msg.sender) + balanceOf(_to) == previousBalance, "Invariant violation");
+        return true;
     }
 }
